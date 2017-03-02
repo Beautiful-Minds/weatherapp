@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.2/angular.min.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/controllers/weather-controller.js"></script>
+     <script src="js/services/weather-services.js"></script>
+  </head>
+
+  <body ng-app='weatherApp'>
+    <h1>Weather App</h1>
+    <div ng-controller='weatherController'>
+	Enter or select city:
+	<input list="selectedCity" type="" ng-model="selectedCity" ng-change="onChange(SelectedDoctor)" />
+	<datalist id="selectedCity">
+		<option ng-repeat="city in cities" value="{{city}}"> {{city}} </option>
+	</datalist>
+	<div ng-if="currentData">	
+		<span> Current weather data </span>
+		<div>
+		  <div class='current'>
+			Weather info at {{currentData.location.city}}, {{currentData.location.region}} <br>
+			Sun rise: {{currentData.astronomy.sunrise}}, Sun set: {{currentData.astronomy.sunset}} <br>
+			Wind Speed: {{currentData.wind.speed}}
+		  </div>
+		</div>
+	</div>
+	<div ng-if="forcastData">
+		<span>Forecast for next 10 days </span>
+		<div> 
+		  <div class="forecast" ng-repeat="forcast in forcastData">
+			Date: {{forcast.date}}<br>
+			 {{forcast.text}} <br>
+			High: {{forcast.high}}, Low: {{forcast.low}}
+		   </div>
+		   <div style="clear: both;"></div>
+		</div>
+	</div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,80 @@
+describe('weatherController', function() {
+   
+   var $httpBackend, $rootScope, createController;
+
+   beforeEach(module('weatherApp'));
+
+   beforeEach(inject(function($injector) {
+
+     $httpBackend = $injector.get('$httpBackend');
+     $rootScope = $injector.get('$rootScope');
+     weatherService = $injector.get('weatherService')
+     authRequestHandler = $httpBackend.when('GET', YAHOO_TEST_URL)
+                            .respond(TEST_JSON_DATA);
+	
+     var $controller = $injector.get('$controller');
+	
+     createController = function() {
+       return $controller('MyController', {'$scope' : $rootScope, weatherService: weatherService });
+     };
+   }));
+
+
+   afterEach(function() {
+     $httpBackend.verifyNoOutstandingExpectation();
+     $httpBackend.verifyNoOutstandingRequest();
+   });
+
+
+   it('should fetch weather data', function() {
+     var controller = createController();
+     $rootScope.selectedCity = 'Test City';	
+     controller.onChage();	
+     expect($rootScope.currentData).toBe(EXPECTED_WEATHER_DATA);
+     expect($rootScope.forcastData).toBe(EXPECTED_FORCAST_DATA);	
+   });
+
+
+   it('should fail authentication', function() {
+
+     // Notice how you can change the response even after it was set
+     authRequestHandler.respond(401, '');
+
+     $httpBackend.expectGET('/auth.py');
+     var controller = createController();
+     $httpBackend.flush();
+     expect($rootScope.status).toBe('Failed...');
+   });
+
+
+   it('should send msg to server', function() {
+     var controller = createController();
+     $httpBackend.flush();
+
+     // now you don’t care about the authentication, but
+     // the controller will still send the request and
+     // $httpBackend will respond without you having to
+     // specify the expectation and response for this request
+
+     $httpBackend.expectPOST('/add-msg.py', 'message content').respond(201, '');
+     $rootScope.saveMessage('message content');
+     expect($rootScope.status).toBe('Saving...');
+     $httpBackend.flush();
+     expect($rootScope.status).toBe('');
+   });
+
+
+   it('should send auth header', function() {
+     var controller = createController();
+     $httpBackend.flush();
+
+     $httpBackend.expectPOST('/add-msg.py', undefined, function(headers) {
+       // check if the header was sent, if it wasn't the expectation won't
+       // match the request and the test will fail
+       return headers['Authorization'] === 'xxx';
+     }).respond(201, '');
+
+     $rootScope.saveMessage('whatever');
+     $httpBackend.flush();
+   });
+});
