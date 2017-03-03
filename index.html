@@ -17,6 +17,7 @@
 	<datalist id="selectedCity">
 		<option ng-repeat="city in cities" value="{{city}}"> {{city}} </option>
 	</datalist>
+	<div ng-if="error" class="error"> {{error}}</div>
 	<div ng-if="currentData">	
 		<span> Current weather data </span>
 		<div>

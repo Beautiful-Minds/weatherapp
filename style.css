@@ -13,6 +13,10 @@
   color:white;
 }
 
+.error{
+  color:red;
+}
+
 /* Portrait */
 @media screen 
   and (device-width: 320px) 
