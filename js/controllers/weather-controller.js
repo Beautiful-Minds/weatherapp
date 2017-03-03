@@ -12,6 +12,7 @@ weatherApp.controller('weatherController',
 			if(response.status===200){
 				if(response.data.query.results){
 					$scope.currentData = {};
+					$scope.error	= '';
 					$scope.currentData.location = response.data.query.results.channel.location;
 					$scope.currentData.wind = response.data.query.results.channel.wind;
 					$scope.currentData.astronomy = response.data.query.results.channel.astronomy;
